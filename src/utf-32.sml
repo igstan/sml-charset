@@ -29,10 +29,16 @@ structure UTF32 :> CODEC =
         fun combine a b c d =
           let
             open Word infix orb <<
+
+            fun toWord (a, b, c, d) =
+              (a << 0w24) orb (b << 0w16) orb (c << 0w8) orb d
+
+            val bytes =
+              case endianness of
+                Endian.Big => (a, b, c, d)
+              | Endian.Lit => (d, c, b, a)
           in
-            case endianness of
-              Endian.Big => (a << 0w24) orb (b << 0w16) orb (c << 0w8) orb d
-            | Endian.Lit => (d << 0w24) orb (c << 0w16) orb (b << 0w8) orb a
+            toWord bytes
           end
 
         val word = Reader.map (Word.fromInt o Word8.toInt) reader
