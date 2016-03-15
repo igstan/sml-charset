@@ -1,0 +1,9 @@
+library (0.1.0)
+  signature CODEC
+
+  structure Endian
+is
+  $SMACKAGE/sml-foundation/v0.1.4/lib.cm (version: 0.1.4)
+
+  src/reader.sml
+  src/codec.sml
