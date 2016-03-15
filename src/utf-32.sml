@@ -2,7 +2,27 @@ structure UTF32 :> CODEC =
   struct
     exception Malformed
 
-    fun encode endianness reader stream = raise Fail "not implemented"
+    fun encode endianness reader stream =
+      let
+        fun split word =
+          let
+            open Word infix andb >>
+
+            val toByte = Word8.fromInt o Word.toInt
+            val a = toByte (word andb 0wx7F000000 >> 0w24)
+            val b = toByte (word andb 0wx00FF0000 >> 0w16)
+            val c = toByte (word andb 0wx0000FF00 >> 0w08)
+            val d = toByte (word andb 0wx000000FF)
+            val words =
+              case endianness of
+                Endian.Big => [a, b, c, d]
+              | Endian.Lit => [d, c, b, a]
+          in
+            Word8Vector.fromList words
+          end
+      in
+        Reader.map split reader stream
+      end
 
     fun decode endianness reader stream =
       let
