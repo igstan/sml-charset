@@ -18,7 +18,7 @@ structure UTF16 :> CODEC =
         | Endian.Lit => [b, a, d, c]
       end
 
-    fun basicMultilingualPlan endianness word =
+    fun basicMultilingualPlane endianness word =
       let
         open Word infix andb >>
         val a = word andb 0wxFF
@@ -38,7 +38,7 @@ structure UTF16 :> CODEC =
             Word8Vector.fromList (List.map (Word8.fromInt o Word.toInt) words)
           val words =
             if word < 0wx10000
-            then basicMultilingualPlan endianness word
+            then basicMultilingualPlane endianness word
             else surrogatePair endianness word
         in
           SOME (toVector words, stream)
