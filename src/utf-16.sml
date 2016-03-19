@@ -2,7 +2,6 @@ structure UTF16 :> CODEC =
   struct
     exception Malformed
 
-
     fun encode endianness reader stream =
       let
         fun surrogatePair endianness word =
