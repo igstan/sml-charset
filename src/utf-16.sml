@@ -44,5 +44,59 @@ structure UTF16 :> CODEC =
           SOME (toVector words, stream)
         end
 
-    fun decode endianness reader stream = raise Fail "not implemented"
+    structure Surrogate =
+      struct
+        datatype t =
+          Low of word
+        | High of word
+        | None of word
+
+        fun match word =
+          if word >= 0wxDC00 andalso word <= 0wxDFFF
+          then Low word
+          else
+            if word >= 0wxD800 andalso word <= 0wxDBFF
+            then High word
+            else None word
+      end
+
+    fun decode endianness reader stream =
+      let
+        open Word infix andb orb <<
+
+        fun codeUnit a b =
+          case endianness of
+              Endian.Big => (a << 0w8) orb b
+            | Endian.Lit => (b << 0w8) orb a
+
+        fun combine high low =
+          0wx10000 + ((high andb 0wx03FF) << 0w10) + (low andb 0wx03FF)
+
+        val word = Reader.map (Word.fromInt o Word8.toInt) reader
+      in
+        case Reader.group 2 word stream of
+          NONE => NONE
+        | SOME (words, stream) =>
+            case Vector.toList words of
+              [a, b] =>
+              let in
+                case Surrogate.match (codeUnit a b) of
+                  Surrogate.Low _ => raise Malformed
+                | Surrogate.None word => SOME (word, stream)
+                | Surrogate.High high =>
+                    case Reader.group 2 word stream of
+                      NONE => raise Malformed
+                    | SOME (words, stream) =>
+                        case Vector.toList words of
+                          [a, b] =>
+                          let in
+                            case Surrogate.match (codeUnit a b) of
+                              Surrogate.None _ => raise Malformed
+                            | Surrogate.High _ => raise Malformed
+                            | Surrogate.Low low => SOME (combine high low, stream)
+                          end
+                        | _ => raise Malformed
+              end
+            | _ => NONE
+      end
   end
