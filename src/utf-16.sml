@@ -76,27 +76,23 @@ structure UTF16 :> CODEC =
       in
         case Reader.group 2 word stream of
           NONE => NONE
-        | SOME (words, stream) =>
-            case Vector.toList words of
-              [a, b] =>
-              let in
-                case Surrogate.match (codeUnit a b) of
-                  Surrogate.Low _ => raise Malformed
-                | Surrogate.None word => SOME (word, stream)
-                | Surrogate.High high =>
-                    case Reader.group 2 word stream of
-                      NONE => raise Malformed
-                    | SOME (words, stream) =>
-                        case Vector.toList words of
-                          [a, b] =>
-                          let in
-                            case Surrogate.match (codeUnit a b) of
-                              Surrogate.None _ => raise Malformed
-                            | Surrogate.High _ => raise Malformed
-                            | Surrogate.Low low => SOME (combine high low, stream)
-                          end
-                        | _ => raise Malformed
-              end
-            | _ => NONE
+        | SOME ([a, b], stream) =>
+          let in
+            case Surrogate.match (codeUnit a b) of
+              Surrogate.Low _ => raise Malformed
+            | Surrogate.None word => SOME (word, stream)
+            | Surrogate.High high =>
+                case Reader.group 2 word stream of
+                  NONE => raise Malformed
+                | SOME ([a, b], stream) =>
+                  let in
+                    case Surrogate.match (codeUnit a b) of
+                      Surrogate.None _ => raise Malformed
+                    | Surrogate.High _ => raise Malformed
+                    | Surrogate.Low low => SOME (combine high low, stream)
+                  end
+                | _ => raise Malformed
+          end
+        | _ => NONE
       end
   end

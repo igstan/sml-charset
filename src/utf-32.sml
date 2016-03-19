@@ -45,9 +45,7 @@ structure UTF32 :> CODEC =
       in
         case Reader.group 4 word stream of
           NONE => NONE
-        | SOME (words, stream) =>
-            case Vector.toList words of
-              [a, b, c, d] => SOME (combine a b c d, stream)
-            | _ => NONE
+        | SOME ([a, b, c, d], stream) => SOME (combine a b c d, stream)
+        | _ => NONE
       end
   end

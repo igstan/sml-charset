@@ -10,10 +10,10 @@ structure Reader =
         fun loop stream 0 result = SOME (result, stream)
           | loop stream n result =
               case reader stream of
-                NONE => SOME (result, stream)
+                NONE => SOME (List.rev result, stream)
               | SOME (a, stream) =>
-                  loop stream (n - 1) (Vector.append (result, a))
+                  loop stream (n - 1) (a :: result)
       in
-        loop stream n (Vector.fromList [])
+        loop stream n []
       end
   end
