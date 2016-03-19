@@ -1,16 +1,50 @@
 structure UTF8 :> CODEC =
   struct
+    infix << & >>
+
+    val op << = Word.<<
+    val op & = Word.andb
+    val op >> = Word.>>
+
     exception Malformed
 
-    fun encode endianness reader stream = raise Fail "not implemented"
+    fun encode endianness reader stream =
+      case reader stream of
+        NONE => NONE
+      | SOME (word, stream) =>
+        let
+          fun toVector words =
+            Word8Vector.fromList (List.map (Word8.fromInt o Word.toInt) words)
+
+          val bytes =
+            if word <= 0wx7F
+            then [word]
+            else
+              if 0wx80 <= word andalso word <= 0wx07FF
+              then [0wxC0 + ((word >> 0w6) & 0wx1F), 0wx80 + (word & 0wx3F)]
+              else
+                if (0wx800 <= word andalso word <= 0wxD7FF)
+                  orelse (0wxE000 <= word andalso word <= 0wxFFFF)
+                then [
+                  0wxE0 + ((word >> 0w12) & 0wx0F),
+                  0wx80 + ((word >> 0w06) & 0wx3F),
+                  0wx80 + (word & 0wx3F)
+                ]
+                else
+                  if 0wx10000 <= word andalso word <= 0wx10FFFF
+                  then [
+                    0wxF0 + ((word >> 0w18) & 0wx07),
+                    0wx80 + ((word >> 0w12) & 0wx3F),
+                    0wx80 + ((word >> 0w06) & 0wx3F),
+                    0wx80 + (word & 0wx3F)
+                  ]
+                  else raise Malformed
+        in
+          SOME (toVector bytes, stream)
+        end
 
     fun decode endianness reader stream =
       let
-        infix & <<
-
-        val op & = Word.andb
-        val op << = Word.<<
-
         fun combine bytes =
           case bytes of
             [a, b, c, d] =>
