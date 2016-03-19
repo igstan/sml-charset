@@ -1,0 +1,19 @@
+$(SML_LIB)/basis/basis.mlb
+
+local
+  src/reader.sml
+  src/charset.sml
+  src/utf-8.sml
+  src/utf-16.fun
+  src/utf-16.sml
+  src/utf-32.fun
+  src/utf-32.sml
+in
+  signature CHARSET
+
+  structure UTF8
+  structure UTF16BE
+  structure UTF16LE
+  structure UTF32BE
+  structure UTF32LE
+end
