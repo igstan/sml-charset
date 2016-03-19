@@ -1,5 +1,5 @@
 library (0.1.0)
-  signature CODEC
+  signature CHARSET
 
   structure UTF8
   structure UTF16BE
@@ -10,7 +10,7 @@ is
   $/basis.cm
 
   src/reader.sml
-  src/codec.sml
+  src/charset.sml
   src/utf-8.sml
   src/utf-16.fun
   src/utf-16.sml

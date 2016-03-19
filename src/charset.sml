@@ -3,7 +3,7 @@ structure Endian =
     datatype t =  Big | Lit
   end
 
-signature CODEC =
+signature CHARSET =
   sig
     exception Malformed
     val encode : (Word.word, 's) Reader.t -> (Word8Vector.vector, 's) Reader.t

@@ -1,4 +1,4 @@
-structure UTF8 :> CODEC =
+structure UTF8 :> CHARSET =
   struct
     infix << & >>
 

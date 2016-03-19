@@ -1,4 +1,4 @@
-functor UTF32(val endianness : Endian.t) :> CODEC =
+functor UTF32(val endianness : Endian.t) :> CHARSET =
   struct
     exception Malformed
 
