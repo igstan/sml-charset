@@ -2,6 +2,7 @@ library (0.1.0)
   signature CODEC
 
   structure Endian
+  structure UTF8
   structure UTF16
   structure UTF32
 is
@@ -9,5 +10,6 @@ is
 
   src/reader.sml
   src/codec.sml
+  src/utf-8.sml
   src/utf-16.sml
   src/utf-32.sml

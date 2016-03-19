@@ -16,4 +16,22 @@ structure Reader =
       in
         loop stream n []
       end
+
+    fun seq readers stream =
+      let
+        fun return result stream =
+          case result of
+            [] => NONE
+          | _ => SOME (List.rev result, stream)
+
+        fun loop readers stream result =
+          case readers of
+            [] => return result stream
+          | reader :: readers =>
+            case reader stream of
+              NONE => return result stream
+            | SOME (a, stream) => loop readers stream (a :: result)
+      in
+        loop readers stream []
+      end
   end
