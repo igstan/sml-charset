@@ -8,7 +8,7 @@ structure UTF8 :> CODEC =
 
     exception Malformed
 
-    fun encode endianness reader stream =
+    fun encode reader stream =
       case reader stream of
         NONE => NONE
       | SOME (word, stream) =>
@@ -43,7 +43,7 @@ structure UTF8 :> CODEC =
           SOME (toVector bytes, stream)
         end
 
-    fun decode endianness reader stream =
+    fun decode reader stream =
       let
         fun combine bytes =
           case bytes of

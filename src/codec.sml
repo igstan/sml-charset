@@ -6,6 +6,6 @@ structure Endian =
 signature CODEC =
   sig
     exception Malformed
-    val encode : Endian.t -> (Word.word, 's) Reader.t -> (Word8Vector.vector, 's) Reader.t
-    val decode : Endian.t -> (Word8.word, 's) Reader.t -> (Word.word, 's) Reader.t
+    val encode : (Word.word, 's) Reader.t -> (Word8Vector.vector, 's) Reader.t
+    val decode : (Word8.word, 's) Reader.t -> (Word.word, 's) Reader.t
   end
