@@ -43,7 +43,7 @@ structure UTF32 :> CODEC =
 
         val word = Reader.map (Word.fromInt o Word8.toInt) reader
       in
-        case Reader.group 4 word stream of
+        case Reader.grouped 4 word stream of
           NONE => NONE
         | SOME ([a, b, c, d], stream) => SOME (combine a b c d, stream)
         | _ => NONE

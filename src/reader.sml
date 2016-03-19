@@ -5,7 +5,7 @@ structure Reader =
     fun map f reader stream =
       Option.map (fn (a, s) => (f a, s)) (reader stream)
 
-    fun group n reader stream =
+    fun grouped n reader stream =
       let
         fun loop stream 0 result = SOME (result, stream)
           | loop stream n result =

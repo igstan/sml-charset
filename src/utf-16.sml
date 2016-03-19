@@ -74,7 +74,7 @@ structure UTF16 :> CODEC =
 
         val word = Reader.map (Word.fromInt o Word8.toInt) reader
       in
-        case Reader.group 2 word stream of
+        case Reader.grouped 2 word stream of
           NONE => NONE
         | SOME ([a, b], stream) =>
           let in
@@ -82,7 +82,7 @@ structure UTF16 :> CODEC =
               Surrogate.Low _ => raise Malformed
             | Surrogate.None word => SOME (word, stream)
             | Surrogate.High high =>
-                case Reader.group 2 word stream of
+                case Reader.grouped 2 word stream of
                   NONE => raise Malformed
                 | SOME ([a, b], stream) =>
                   let in
