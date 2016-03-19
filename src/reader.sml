@@ -7,7 +7,7 @@ structure Reader =
 
     fun grouped n reader stream =
       let
-        fun loop stream 0 result = SOME (result, stream)
+        fun loop stream 0 result = SOME (List.rev result, stream)
           | loop stream n result =
               case reader stream of
                 NONE => SOME (List.rev result, stream)
