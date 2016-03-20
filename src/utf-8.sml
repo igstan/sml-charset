@@ -1,10 +1,6 @@
 structure UTF8 :> CHARSET =
   struct
-    infix << & >>
-
-    val op << = Word.<<
-    val op & = Word.andb
-    val op >> = Word.>>
+    open WordSyntax infix & << >> orb
 
     exception Malformed
 

@@ -16,3 +16,4 @@ is
   src/utf-16.sml
   src/utf-32.fun
   src/utf-32.sml
+  src/word-syntax.sml

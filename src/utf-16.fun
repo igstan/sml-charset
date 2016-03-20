@@ -1,19 +1,20 @@
 functor UTF16(val endianness : Endian.t) :> CHARSET =
   struct
+    open WordSyntax infix & << >> orb
+
     exception Malformed
 
     fun encode reader stream =
       let
         fun surrogatePair endianness word =
           let
-            open Word infix andb orb >>
             val code = word - 0wx10000
             val fst16 = 0wxD800 orb (code >> 0w10)
-            val snd16 = 0wxDC00 orb (code andb 0wx3FF)
+            val snd16 = 0wxDC00 orb (code & 0wx3FF)
             val a = fst16 >> 0w8
-            val b = fst16 andb 0wxFFFF
+            val b = fst16 & 0wxFFFF
             val c = snd16 >> 0w8
-            val d = snd16 andb 0wxFFFF
+            val d = snd16 & 0wxFFFF
           in
             case endianness of
               Endian.Big => [a, b, c, d]
@@ -22,8 +23,7 @@ functor UTF16(val endianness : Endian.t) :> CHARSET =
 
         fun basicMultilingualPlane endianness word =
           let
-            open Word infix andb >>
-            val a = word andb 0wxFF
+            val a = word & 0wxFF
             val b = word >> 0w8
           in
             case endianness of
@@ -64,15 +64,13 @@ functor UTF16(val endianness : Endian.t) :> CHARSET =
 
     fun decode reader stream =
       let
-        open Word infix andb orb <<
-
         fun codeUnit a b =
           case endianness of
               Endian.Big => (a << 0w8) orb b
             | Endian.Lit => (b << 0w8) orb a
 
         fun combine high low =
-          0wx10000 + ((high andb 0wx03FF) << 0w10) + (low andb 0wx03FF)
+          0wx10000 + ((high & 0wx03FF) << 0w10) + (low & 0wx03FF)
 
         val word = Reader.map (Word.fromInt o Word8.toInt) reader
       in
