@@ -1,6 +1,6 @@
 structure UTF8 :> CHARSET =
   struct
-    open WordSyntax infix & << >> orb
+    open WordSyntax infix << >> andb orb
 
     exception Malformed
 
@@ -17,22 +17,25 @@ structure UTF8 :> CHARSET =
             then [word]
             else
               if 0wx80 <= word andalso word <= 0wx07FF
-              then [0wxC0 + ((word >> 0w6) & 0wx1F), 0wx80 + (word & 0wx3F)]
+              then [
+                0wxC0 + ((word >> 0w6) andb 0wx1F),
+                0wx80 + (word andb 0wx3F)
+              ]
               else
                 if (0wx800 <= word andalso word <= 0wxD7FF)
                   orelse (0wxE000 <= word andalso word <= 0wxFFFF)
                 then [
-                  0wxE0 + ((word >> 0w12) & 0wx0F),
-                  0wx80 + ((word >> 0w06) & 0wx3F),
-                  0wx80 + (word & 0wx3F)
+                  0wxE0 + ((word >> 0w12) andb 0wx0F),
+                  0wx80 + ((word >> 0w06) andb 0wx3F),
+                  0wx80 + (word andb 0wx3F)
                 ]
                 else
                   if 0wx10000 <= word andalso word <= 0wx10FFFF
                   then [
-                    0wxF0 + ((word >> 0w18) & 0wx07),
-                    0wx80 + ((word >> 0w12) & 0wx3F),
-                    0wx80 + ((word >> 0w06) & 0wx3F),
-                    0wx80 + (word & 0wx3F)
+                    0wxF0 + ((word >> 0w18) andb 0wx07),
+                    0wx80 + ((word >> 0w12) andb 0wx3F),
+                    0wx80 + ((word >> 0w06) andb 0wx3F),
+                    0wx80 + (word andb 0wx3F)
                   ]
                   else raise Malformed
         in
@@ -44,12 +47,14 @@ structure UTF8 :> CHARSET =
         fun combine bytes =
           case bytes of
             [a, b, c, d] =>
-              ((a & 0wx07) << 0w18) +
-              ((b & 0wx3F) << 0w12) + ((c & 0wx3F) << 0w06) + (d & 0wx3F)
+              ((a andb 0wx07) << 0w18) +
+              ((b andb 0wx3F) << 0w12) +
+              ((c andb 0wx3F) << 0w06) + (d andb 0wx3F)
           | [a, b, c] =>
-              ((a & 0wx0F) << 0w12) + ((b & 0wx3F) << 0w06) + (c & 0wx3F)
+              ((a andb 0wx0F) << 0w12) +
+              ((b andb 0wx3F) << 0w06) + (c andb 0wx3F)
           | [a, b] =>
-              ((a & 0wx1F) << 0w06) + (b & 0wx3F)
+              ((a andb 0wx1F) << 0w06) + (b andb 0wx3F)
           | [a] => a
           | _ => raise Malformed
 

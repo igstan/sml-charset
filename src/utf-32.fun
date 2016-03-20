@@ -1,6 +1,6 @@
 functor UTF32(val endianness : Endian.t) :> CHARSET =
   struct
-    open WordSyntax infix & << >> orb
+    open WordSyntax infix << >> andb orb
 
     exception Malformed
 
@@ -9,10 +9,10 @@ functor UTF32(val endianness : Endian.t) :> CHARSET =
         fun split word =
           let
             val toByte = Word8.fromInt o Word.toInt
-            val a = toByte (word & 0wx7F000000 >> 0w24)
-            val b = toByte (word & 0wx00FF0000 >> 0w16)
-            val c = toByte (word & 0wx0000FF00 >> 0w08)
-            val d = toByte (word & 0wx000000FF)
+            val a = toByte (word andb 0wx7F000000 >> 0w24)
+            val b = toByte (word andb 0wx00FF0000 >> 0w16)
+            val c = toByte (word andb 0wx0000FF00 >> 0w08)
+            val d = toByte (word andb 0wx000000FF)
             val words =
               case endianness of
                 Endian.Big => [a, b, c, d]
