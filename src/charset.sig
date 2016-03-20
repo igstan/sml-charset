@@ -1,8 +1,3 @@
-structure Endian =
-  struct
-    datatype t =  Big | Lit
-  end
-
 signature CHARSET =
   sig
     exception Malformed

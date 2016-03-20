@@ -9,11 +9,10 @@ library (0.1.0)
 is
   $/basis.cm
 
-  src/reader.sml
-  src/charset.sml
+  src/charset.sig
+  src/common.sml
   src/utf-8.sml
   src/utf-16.fun
   src/utf-16.sml
   src/utf-32.fun
   src/utf-32.sml
-  src/word-syntax.sml

@@ -1,3 +1,16 @@
+structure Endian =
+  struct
+    datatype t =  Big | Lit
+  end
+
+structure WordSyntax =
+  struct
+    val op << = Word.<<
+    val op >> = Word.>>
+    val op andb = Word.andb
+    val op orb = Word.orb
+  end
+
 structure Reader =
   let
     fun return result stream =
