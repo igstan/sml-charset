@@ -1,8 +1,10 @@
 $(SML_LIB)/basis/basis.mlb
 
 local
-  src/reader.sml
-  src/charset.sml
+  src/common.sml
+  src/charset.sig
+  src/encoding.sig
+  src/encoding.sml
   src/utf-8.sml
   src/utf-16.fun
   src/utf-16.sml
@@ -10,7 +12,9 @@ local
   src/utf-32.sml
 in
   signature CHARSET
+  signature ENCODING
 
+  structure Encoding
   structure UTF8
   structure UTF16BE
   structure UTF16LE
