@@ -1,4 +1,4 @@
-provides: sml-charset 0.1.0
+provides: sml-charset 0.1.1
 remote: git git://github.com/igstan/sml-charset.git
 description: Charset Codecs for Standard ML
 maintainer: Ionuț G. Stan <ionut.g.stan at gmail dot com>
